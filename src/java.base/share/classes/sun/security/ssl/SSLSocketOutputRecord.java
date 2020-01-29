@@ -28,7 +28,6 @@ package sun.security.ssl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.MikeLogger;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import javax.net.ssl.SSLHandshakeException;
@@ -37,8 +36,6 @@ import javax.net.ssl.SSLHandshakeException;
  * {@code OutputRecord} implementation for {@code SSLSocket}.
  */
 final class SSLSocketOutputRecord extends OutputRecord implements SSLRecord {
-    private static final Integer SLEEP_NANOS = Integer.getInteger("ssl.deliver.sleep.nanos");
-
     private OutputStream deliverStream = null;
 
     SSLSocketOutputRecord(HandshakeHash handshakeHash) {
@@ -336,27 +333,6 @@ final class SSLSocketOutputRecord extends OutputRecord implements SSLRecord {
             }
 
             offset += fragLen;
-        }
-
-        if (SLEEP_NANOS != null) {
-            try {
-                Thread.sleep(0, SLEEP_NANOS);
-            } catch (Exception ignored) {
-            }
-        }
-//        if (SLEEP_NANOS > 0) {
-//            busyLoop(SLEEP_NANOS);
-//        }
-    }
-
-    private void busyLoop(long nanos) {
-        long start = System.nanoTime();
-        while (true) {
-            for (int i = 0; i < 1000; ++i) {
-            }
-            if (System.nanoTime() - start > nanos) {
-                return;
-            }
         }
     }
 

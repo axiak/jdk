@@ -25,8 +25,6 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
-#include <stdio.h>
 
 #include "net_util.h"
 
@@ -49,11 +47,6 @@ JNIEXPORT void JNICALL
 Java_java_net_SocketOutputStream_init(JNIEnv *env, jclass cls) {
     IO_fd_fdID = NET_GetFileDescriptorID(env);
 }
-
-/*
- * hmm
- */
-void logger(char * log, int param1);
 
 /*
  * Class:     java_net_SocketOutputStream
@@ -130,18 +123,4 @@ Java_java_net_SocketOutputStream_socketWrite0(JNIEnv *env, jobject this,
     if (bufP != BUF) {
         free(bufP);
     }
-}
-
-
-void logger(char * log, int param1) {
-  char thread_name[256];
-  int rc = pthread_getname_np(pthread_self(), thread_name, 256);
-  if (rc != 0) {
-    return;
-  }
-  if (strstr(thread_name, "java") != NULL ||strstr(thread_name, "IPC ") != NULL ||
-      strstr(thread_name, "main") != NULL) {
-    printf("NetSend: %s\t%d\n", log, param1);
-    fflush(stdout);
-  }
 }

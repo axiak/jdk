@@ -52,8 +52,6 @@ static int NET_ReadWithTimeout(JNIEnv *env, int fd, char *bufP, int len, long ti
     jlong prevNanoTime = JVM_NanoTime(env, 0);
     jlong nanoTimeout = (jlong) timeout * NET_NSEC_PER_MSEC;
     while (nanoTimeout >= NET_NSEC_PER_MSEC) {
-      //printf("NET_Timeout(fd=%d, timeout=%lu, prevNanoTime=%lu)\n",
-      //     fd, nanoTimeout / NET_NSEC_PER_MSEC, prevNanoTime);
         result = NET_Timeout(env, fd, nanoTimeout / NET_NSEC_PER_MSEC, prevNanoTime);
         if (result <= 0) {
             if (result == 0) {
