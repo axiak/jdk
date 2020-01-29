@@ -928,6 +928,8 @@ public final class SSLSocketImpl
     }
 
 
+    private static final boolean LOG_WRITE_LENGTH = Boolean.getBoolean("ssl.log.write.length");
+
     /**
      * OutputStream for application data as returned by
      * SSLSocket.getOutputStream().
@@ -963,6 +965,17 @@ public final class SSLSocketImpl
                 return;
             }
 
+            if (LOG_WRITE_LENGTH && Thread.currentThread().getName().startsWith("main")) {
+                System.out.println(" sslWrite() with len=" + len);
+            }
+            if (Thread.currentThread().getName().contains("main-aasdfasdfasdf")) {
+                System.out.println("Stack");
+                for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
+                    System.out.println("  class=" + element.getClassName() + ", method=" + element.getMethodName()
+                        + ":" + element.getLineNumber());
+                }
+            }
+
             // Start handshaking if the connection has not been negotiated.
             if (!conContext.isNegotiated && !conContext.isBroken &&
                     !conContext.isInboundClosed() &&
@@ -992,6 +1005,7 @@ public final class SSLSocketImpl
             // limit been reached?
             if (conContext.outputRecord.seqNumIsHuge() ||
                     conContext.outputRecord.writeCipher.atKeyLimit()) {
+                System.out.println(Thread.currentThread().getName() + " -> tryKeyUpdate called.");
                 tryKeyUpdate();
             }
         }

@@ -443,8 +443,15 @@ final class SSLSocketInputRecord extends InputRecord implements SSLRecord {
     // Read the exact bytes of data, otherwise, return -1.
     private static int read(InputStream is,
             byte[] buffer, int offset, int len) throws IOException {
+        boolean shouldLog = Thread.currentThread().getName().startsWith("IPC");
+        if (shouldLog) {
+            System.out.println("read() with len=" + len);
+        }
         int n = 0;
         while (n < len) {
+            if (shouldLog) {
+                System.out.println("  delegate read->len=" + (len - n));
+            }
             int readLen = is.read(buffer, offset + n, len - n);
             if (readLen < 0) {
                 if (SSLLogger.isOn && SSLLogger.isOn("packet")) {
